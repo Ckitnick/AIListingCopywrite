@@ -645,7 +645,7 @@ with r2c3:
     )
 with r2c4:
     tone = st.selectbox(
-        "Tone",
+        "Tone. How do you want your description to feel",
         ["Professional", "Warm & Inviting", "Luxury", "Investor-Focused", "Coastal Vibes"]
     )
 
@@ -790,4 +790,5 @@ if submitted:
     st.code(upgrades_bullets or "(none)", language="markdown")
     st.markdown("**SEO Keywords (auto-built)**")
     st.code(", ".join(auto_keywords) or "(none)", language="text")
+
 
