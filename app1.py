@@ -606,38 +606,34 @@ with st.sidebar:
 tax = feature_taxonomy()
 groups = list(tax.keys())
 
-# Property basics
-col_left, col_right = st.columns([1, 1])
+# -------- Property Basics (TOP) --------
+st.subheader("Property Basics")
+address = st.text_input("Street Address*", "")
+city = st.text_input("City*", "")
+state = st.text_input("State*", "CA")
+zip_code = st.text_input("ZIP*", "")
+beds = st.number_input("Bedrooms", min_value=0.0, step=0.5, value=3.0)
+baths = st.number_input("Bathrooms", min_value=0.0, step=0.5, value=2.0)
+sqft = st.number_input("Interior Sq Ft", min_value=0, step=50, value=1600)
+lot_size = st.number_input("Lot Size (sq ft)", min_value=0, step=100, value=5000)
+year_built = st.number_input("Year Built", min_value=1800, max_value=2100, value=1995)
+price = st.number_input("List Price", min_value=0, step=5000, value=799000)
+property_type = st.selectbox("Property Type", ["Single Family", "Condo", "Townhome", "Multi-Unit", "Luxury", "Investment"])
+tone = st.selectbox("Tone", ["Professional", "Warm & Inviting", "Luxury", "Investor-Focused", "Coastal Vibes"])
+target_buyer_profile = st.text_input("Target Buyer Profile", "Move-up buyers who value indoor-outdoor living")
+neighborhood_notes = st.text_area("Neighborhood Notes (proximity phrasing only)", "Near parks and local schools; quick access to I-15; minutes to shops and cafes.")
 
-with col_left:
-    st.subheader("Property Basics")
-    address = st.text_input("Street Address*", "")
-    city = st.text_input("City*", "")
-    state = st.text_input("State*", "CA")
-    zip_code = st.text_input("ZIP*", "")
-    beds = st.number_input("Bedrooms", min_value=0.0, step=0.5, value=3.0)
-    baths = st.number_input("Bathrooms", min_value=0.0, step=0.5, value=2.0)
-    sqft = st.number_input("Interior Sq Ft", min_value=0, step=50, value=1600)
-    lot_size = st.number_input("Lot Size (sq ft)", min_value=0, step=100, value=5000)
-    year_built = st.number_input("Year Built", min_value=1800, max_value=2100, value=1995)
-    price = st.number_input("List Price", min_value=0, step=5000, value=799000)
-    property_type = st.selectbox("Property Type", ["Single Family", "Condo", "Townhome", "Multi-Unit", "Luxury", "Investment"])
-    tone = st.selectbox("Tone", ["Professional", "Warm & Inviting", "Luxury", "Investor-Focused", "Coastal Vibes"])
-    target_buyer_profile = st.text_input("Target Buyer Profile", "Move-up buyers who value indoor-outdoor living")
-    neighborhood_notes = st.text_area("Neighborhood Notes (proximity phrasing only)", "Near parks and local schools; quick access to I-15; minutes to shops and cafes.")
+st.markdown("---")
 
-# ---- Feature selectors in a FORM (no reruns until 'Apply') ----
-with col_right:
-    st.subheader("Features (check all that apply)")
-
+# -------- Features (BELOW property basics) --------
+st.subheader("Features (check all that apply)")
 with st.form("features_form", clear_on_submit=False):
     feat_cols = st.columns(2)
 
     def _group_key(idx: int) -> str:
         return f"sel_group_{idx}"
 
-    # Collect what the user picked in this form run,
-    # but DON'T write to session_state until Apply is clicked.
+    # Collect within this form run (commit on Apply)
     new_selected_by_key: Dict[str, List[str]] = {}
 
     for i, group in enumerate(groups):
@@ -655,14 +651,13 @@ with st.form("features_form", clear_on_submit=False):
                     label_visibility="collapsed",
                     placeholder="Select one or more features"
                 )
-                # Just remember what the user picked for this group in this form run
                 new_selected_by_key[key] = new_visible
 
     # Form button
     applied = st.form_submit_button("Apply feature selections")
 
     if applied:
-        # NOW commit the changes — overwrite old selections with the new ones
+        # Commit the selections
         for key, new_list in new_selected_by_key.items():
             st.session_state[key] = new_list
         st.toast("Applied!", icon="✅")
