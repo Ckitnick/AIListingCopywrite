@@ -774,8 +774,15 @@ if submitted:
     st.write(social_caption if social_caption else "— (not generated)")
 
     st.subheader("Instagram Hashtags")
-    hashtags = (data.get("instagram_hashtags") or "").strip()
-    st.write(hashtags if hashtags else "— (not generated)")
+    hashtags_raw = (data.get("instagram_hashtags") or "").strip()
+    if hashtags_raw:
+        # Split on spaces and enforce '#' prefix
+        hashtag_list = hashtags_raw.split()
+        hashtag_list = [tag if tag.startswith('#') else f'#{tag}' for tag in hashtag_list]
+        hashtags_formatted = ' '.join(hashtag_list)
+        st.text(hashtags_formatted)  # use text() to preserve spacing
+    else:
+        st.write("— (not generated)")
 
     st.subheader("60-Second Video Script")
     video_script = (data.get("video_script_60s") or "").strip()
@@ -790,6 +797,7 @@ if submitted:
     st.code(upgrades_bullets or "(none)", language="markdown")
     st.markdown("**SEO Keywords (auto-built)**")
     st.code(", ".join(auto_keywords) or "(none)", language="text")
+
 
 
 
