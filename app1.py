@@ -420,8 +420,8 @@ def detail_level_guidance(level: str) -> str:
     if level == "Concise":
         return "Aim for the LOWER end of the allowed range. Use concise, information-dense sentences."
     if level == "Descriptive":
-        return "Aim for the UPPER end of the allowed range. Add specific, factual details drawn from inputs."
-    return "Aim for the MIDDLE of the allowed range with balanced specificity and clarity."
+        return "Aim for the UPPER end of the allowed range. Add factual details drawn from inputs."
+    return "Aim for the MIDDLE of the allowed range with balanced clarity."
 
 def build_primary_prompt(li: ListingInput) -> str:
     min_chars = int(li.mls_char_limit * 0.9)
@@ -461,7 +461,7 @@ Rules:
 - The first sentence must be a strong hook that highlights the single most impressive or unique feature in under 12 words. 
 - Do NOT start with “Welcome to”, “Introducing”, “Step inside”, or similar generic openings.
 - Do NOT start with the property’s address or location.
-- Begin with vivid, factual, and specific details that spark curiosity or emotion.
+- Begin with vivid and factual details that spark curiosity or emotion.
 - Examples of strong hooks:
     - “Panoramic ocean views frame every room in this coastal masterpiece.”
     - “A private backyard oasis awaits with a resort-style pool and spa.”
@@ -470,7 +470,7 @@ Rules:
     - “Welcome to this beautiful home…”
     - “Introducing our latest listing…”
     - “Step inside and discover…”
-- Use the upgrades/features and neighborhood notes to reach the target length—be specific and factual.
+- Use the upgrades/features and neighborhood notes to reach the target length—be factual.
 - No exaggerated claims; avoid steering; no terms implying a protected class.
 - Replace subjective school/safety claims with neutral proximity phrasing (“near local schools,” “close to parks”).
 - Plain language; avoid fluff/clichés; vary sentence length.
@@ -569,7 +569,7 @@ Using this property context:
 
 Write ONLY JSON with:
 {{"mls_description": "<MLS description between {min_chars} and {li.mls_char_limit} characters, no emojis>"}}
-Be specific and compliant. Replace subjective school/safety claims with neutral proximity phrasing.
+Be compliant. Replace subjective school/safety claims with neutral proximity phrasing.
 """
         else:
             continue
@@ -808,6 +808,7 @@ if submitted:
     st.code(upgrades_bullets or "(none)", language="markdown")
     st.markdown("**SEO Keywords (auto-built)**")
     st.code(", ".join(auto_keywords) or "(none)", language="text")
+
 
 
 
