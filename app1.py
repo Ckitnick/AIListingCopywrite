@@ -458,7 +458,18 @@ Context:
 Rules:
 - MLS description MUST be between {min_chars} and {li.mls_char_limit} chars.
 - {guidance}
-- Emphasize the highlight features in the first 1–2 sentences if applicable.
+- The first sentence must be a strong hook that highlights the single most impressive or unique feature in under 12 words. 
+- Do NOT start with “Welcome to”, “Introducing”, “Step inside”, or similar generic openings.
+- Do NOT start with the property’s address or location.
+- Begin with vivid, factual, and specific details that spark curiosity or emotion.
+- Examples of strong hooks:
+    - “Panoramic ocean views frame every room in this coastal masterpiece.”
+    - “A private backyard oasis awaits with a resort-style pool and spa.”
+    - “Vaulted ceilings and skylights flood the open-concept living area with light.”
+- Examples of weak hooks to avoid:
+    - “Welcome to this beautiful home…”
+    - “Introducing our latest listing…”
+    - “Step inside and discover…”
 - Use the upgrades/features and neighborhood notes to reach the target length—be specific and factual.
 - No exaggerated claims; avoid steering; no terms implying a protected class.
 - Replace subjective school/safety claims with neutral proximity phrasing (“near local schools,” “close to parks”).
@@ -797,6 +808,7 @@ if submitted:
     st.code(upgrades_bullets or "(none)", language="markdown")
     st.markdown("**SEO Keywords (auto-built)**")
     st.code(", ".join(auto_keywords) or "(none)", language="text")
+
 
 
 
