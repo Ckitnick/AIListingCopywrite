@@ -630,36 +630,42 @@ with col_left:
 with col_right:
     st.subheader("Features (check all that apply)")
 
-    with st.form("features_form", clear_on_submit=False):
-        feat_cols = st.columns(2)
+with st.form("features_form", clear_on_submit=False):
+    feat_cols = st.columns(2)
 
-        def _group_key(idx: int) -> str:
-            return f"sel_group_{idx}"
+    def _group_key(idx: int) -> str:
+        return f"sel_group_{idx}"
 
-        for i, group in enumerate(groups):
-            all_labels = [label for (label, _v) in tax[group]]
-            key = _group_key(i)
-            current_selected = st.session_state.get(key, [])
+    # Collect what the user picked in this form run,
+    # but DON'T write to session_state until Apply is clicked.
+    new_selected_by_key: Dict[str, List[str]] = {}
 
-            with feat_cols[i % 2]:
-                with st.expander(group, expanded=False):
-                    new_visible = st.multiselect(
-                        label=f"{group} features",
-                        options=all_labels,
-                        default=[x for x in current_selected if x in all_labels],
-                        key=f"ui_{key}",
-                        label_visibility="collapsed",
-                        placeholder="Select one or more features"
-                    )
-                    # Keep original order and dedupe with any existing selections
-                    merged = list(dict.fromkeys(current_selected + new_visible))
-                    st.session_state[key] = merged
+    for i, group in enumerate(groups):
+        all_labels = [label for (label, _v) in tax[group]]
+        key = _group_key(i)
+        current_selected = st.session_state.get(key, [])
 
-        # Form button
-        applied = st.form_submit_button("Apply feature selections")
+        with feat_cols[i % 2]:
+            with st.expander(group, expanded=False):
+                new_visible = st.multiselect(
+                    label=f"{group} features",
+                    options=all_labels,
+                    default=[x for x in current_selected if x in all_labels],
+                    key=f"ui_{key}",
+                    label_visibility="collapsed",
+                    placeholder="Select one or more features"
+                )
+                # Just remember what the user picked for this group in this form run
+                new_selected_by_key[key] = new_visible
 
-        if applied:
-            st.toast("Applied!", icon="✅")
+    # Form button
+    applied = st.form_submit_button("Apply feature selections")
+
+    if applied:
+        # NOW commit the changes — overwrite old selections with the new ones
+        for key, new_list in new_selected_by_key.items():
+            st.session_state[key] = new_list
+        st.toast("Applied!", icon="✅")
 
 # Assemble selection dict from session_state
 selections: Dict[str, List[str]] = {group: [] for group in groups}
