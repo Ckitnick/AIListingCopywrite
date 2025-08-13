@@ -606,24 +606,65 @@ with st.sidebar:
 tax = feature_taxonomy()
 groups = list(tax.keys())
 
-# -------- Property Basics (TOP) --------
+# -------- Property Basics (COMPACT) --------
 st.subheader("Property Basics")
-address = st.text_input("Street Address*", "")
-city = st.text_input("City*", "")
-state = st.text_input("State*", "CA")
-zip_code = st.text_input("ZIP*", "")
-beds = st.number_input("Bedrooms", min_value=0.0, step=0.5, value=3.0)
-baths = st.number_input("Bathrooms", min_value=0.0, step=0.5, value=2.0)
-sqft = st.number_input("Interior Sq Ft", min_value=0, step=50, value=1600)
-lot_size = st.number_input("Lot Size (sq ft)", min_value=0, step=100, value=5000)
-year_built = st.number_input("Year Built", min_value=1800, max_value=2100, value=1995)
-price = st.number_input("List Price", min_value=0, step=5000, value=799000)
-property_type = st.selectbox("Property Type", ["Single Family", "Condo", "Townhome", "Multi-Unit", "Luxury", "Investment"])
-tone = st.selectbox("Tone", ["Professional", "Warm & Inviting", "Luxury", "Investor-Focused", "Coastal Vibes"])
-target_buyer_profile = st.text_input("Target Buyer Profile", "Move-up buyers who value indoor-outdoor living")
-neighborhood_notes = st.text_area("Neighborhood Notes (proximity phrasing only)", "Near parks and local schools; quick access to I-15; minutes to shops and cafes.")
+
+# Full-width street address (usually needs space)
+address = st.text_input("Street Address*", placeholder="123 Main St")
+
+# City / State / ZIP on one row
+c1, c2, c3 = st.columns([2, 0.7, 1])
+with c1:
+    city = st.text_input("City*", placeholder="San Diego")
+with c2:
+    state = st.text_input("State*", value="CA")
+with c3:
+    zip_code = st.text_input("ZIP*", placeholder="92101")
+
+# Beds / Baths / Sq Ft / Lot Size on one row
+r1c1, r1c2, r1c3, r1c4 = st.columns([1, 1, 1, 1])
+with r1c1:
+    beds = st.number_input("Bedrooms", min_value=0.0, step=0.5, value=3.0)
+with r1c2:
+    baths = st.number_input("Bathrooms", min_value=0.0, step=0.5, value=2.0)
+with r1c3:
+    sqft = st.number_input("Interior Sq Ft", min_value=0, step=50, value=1600)
+with r1c4:
+    lot_size = st.number_input("Lot Size (sq ft)", min_value=0, step=100, value=5000)
+
+# Year Built / List Price / Property Type / Tone on one row
+r2c1, r2c2, r2c3, r2c4 = st.columns([1, 1.2, 1.3, 1.3])
+with r2c1:
+    year_built = st.number_input("Year Built", min_value=1800, max_value=2100, value=1995)
+with r2c2:
+    price = st.number_input("List Price", min_value=0, step=5000, value=799000)
+with r2c3:
+    property_type = st.selectbox(
+        "Property Type",
+        ["Single Family", "Condo", "Townhome", "Multi-Unit", "Luxury", "Investment"]
+    )
+with r2c4:
+    tone = st.selectbox(
+        "Tone",
+        ["Professional", "Warm & Inviting", "Luxury", "Investor-Focused", "Coastal Vibes"]
+    )
+
+# Target Buyer Profile / Neighborhood Notes (two-up, with notes wider)
+r3c1, r3c2 = st.columns([1.2, 2])
+with r3c1:
+    target_buyer_profile = st.text_input(
+        "Target Buyer Profile",
+        "Move-up buyers who value indoor-outdoor living"
+    )
+with r3c2:
+    neighborhood_notes = st.text_area(
+        "Neighborhood Notes (proximity phrasing only)",
+        "Near parks and local schools; quick access to I-15; minutes to shops and cafes.",
+        height=80
+    )
 
 st.markdown("---")
+
 
 # -------- Features (BELOW property basics) --------
 st.subheader("Features (check all that apply)")
@@ -749,3 +790,4 @@ if submitted:
     st.code(upgrades_bullets or "(none)", language="markdown")
     st.markdown("**SEO Keywords (auto-built)**")
     st.code(", ".join(auto_keywords) or "(none)", language="text")
+
