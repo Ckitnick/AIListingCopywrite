@@ -10,7 +10,6 @@
 import json
 import os
 import re
-import html
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Any, Tuple
 
@@ -677,6 +676,7 @@ with r3c2:
 
 st.markdown("---")
 
+
 # -------- Features (BELOW property basics) --------
 st.subheader("Features (check all that apply)")
 with st.form("features_form", clear_on_submit=False):
@@ -729,59 +729,6 @@ extra_keywords = [k.strip() for k in re.split(r"[,\n;]+", extra_kw_raw) if k.str
 st.markdown("---")
 submitted = st.button("Start Generating")
 
-# ---------- Copy helper (universal) ----------
-def render_copy_block(title: str, content: str, key: str, height: int = 160, footer_note: str = ""):
-    """
-    Renders a subheader + read-only text + a green 'Copy' button that copies 'content' to clipboard.
-    Uses safe HTML escaping and a hidden <pre> as the copy source to preserve formatting.
-    """
-    st.subheader(title)
-    if not content:
-        st.write("— (not generated)")
-        return
-
-    # Show the content in a nice scrollable area for readability
-    st.text_area(label="", value=content, height=height, key=f"{key}_view")
-
-    # Hidden block that JS will read from (escaped)
-    escaped = html.escape(content)
-
-    st.markdown(
-        f"""
-<div>
-  <button onclick="(async () => {{
-      const src = document.getElementById('{key}-src');
-      if (!src) return;
-      const text = src.textContent;
-      try {{
-        await navigator.clipboard.writeText(text);
-        const m = document.getElementById('msg-{key}');
-        if (m) {{
-          m.style.display = 'inline';
-          setTimeout(() => m.style.display = 'none', 1200);
-        }}
-      }} catch (e) {{
-        alert('Copy failed');
-      }}
-  }})()" style="
-    background-color:#22c55e;
-    border:none;
-    color:white;
-    padding:6px 12px;
-    font-size:14px;
-    border-radius:6px;
-    cursor:pointer;
-  ">Copy</button>
-  <span id="msg-{key}" style="display:none;margin-left:8px;">Copied!</span>
-  <pre id="{key}-src" style="display:none;white-space:pre-wrap;">{escaped}</pre>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
-
-    if footer_note:
-        st.caption(footer_note)
-
 # ---------- Generate ----------
 if submitted:
     if not address or not city or not state or not zip_code:
@@ -828,28 +775,29 @@ if submitted:
             st.stop()
 
     # ------------- Outputs -------------
-    # MLS Description (with live char count)
+    st.subheader("MLS Description")
     mls_text = (data.get("mls_description") or "").strip()
-    render_copy_block("MLS Description", mls_text, key="mls_desc", height=200)
+    st.write(mls_text)
     st.caption(f"Character count: {len(mls_text)} / {li.mls_char_limit}")
 
-    # Social Caption
+    st.subheader("Social Caption")
     social_caption = (data.get("social_caption") or "").strip()
-    render_copy_block("Social Caption", social_caption, key="social_caption", height=120)
+    st.write(social_caption if social_caption else "— (not generated)")
 
-    # Instagram Hashtags (auto-prefix with # and provide copy)
+    st.subheader("Instagram Hashtags")
     hashtags_raw = (data.get("instagram_hashtags") or "").strip()
     if hashtags_raw:
+        # Split on spaces and enforce '#' prefix
         hashtag_list = hashtags_raw.split()
         hashtag_list = [tag if tag.startswith('#') else f'#{tag}' for tag in hashtag_list]
         hashtags_formatted = ' '.join(hashtag_list)
+        st.text(hashtags_formatted)  # use text() to preserve spacing
     else:
-        hashtags_formatted = ""
-    render_copy_block("Instagram Hashtags", hashtags_formatted, key="insta_hashtags", height=120)
+        st.write("— (not generated)")
 
-    # 60-Second Video Script
+    st.subheader("60-Second Video Script")
     video_script = (data.get("video_script_60s") or "").strip()
-    render_copy_block("60-Second Video Script", video_script, key="video_script", height=220)
+    st.write(video_script if video_script else "— (not generated)")
 
     st.success("Done! Review for accuracy/compliance before posting.")
 
